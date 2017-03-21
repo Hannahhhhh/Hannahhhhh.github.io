@@ -1,0 +1,43 @@
+/*mein erstes stylesheet */
+				h1{
+					font-size: 40px; color: #000080; font-family: sans-serif; text-align: center; font-weight:bold;
+				}
+				body{
+					background-color: #B0E0E6;
+					}
+				div li{
+					font-family:Courier;
+					font-size:32px;
+					color:#0000CD;
+					font-weight:bold
+				}
+				.Ueberschrift{
+					font-weight:bold;
+					color:#000080;
+				}
+				
+
+				.wichtig {
+					font-family: Garamond;
+					color:brown;
+					font-size:30px;
+					border:1px solid blue;
+					width:200px;
+					background-color:#DEB887;
+					border-radius:10px;
+					margin:auto;
+					text-align:center;
+					display:block;
+					}
+				.wichtig:hover{
+					background-color:#4169E1;
+				}	
+				.abbildung{
+					border:1px dashed blue;
+					padding:20px;
+					width:640px;
+					height:426px
+					
+				}
+
+
