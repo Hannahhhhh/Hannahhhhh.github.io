@@ -8,9 +8,13 @@
     <title>basemap.at mit leaflet-hash Plugin</title>
 
     <link rel="stylesheet" href="js/leaflet/leaflet.css" />
+	<link rel="stylesheet" href="js/leaflet-elevation/leaflet.elevation-0.0.4.css" />
     <script src="js/leaflet/leaflet.js"></script>
     <script src="js/leaflet-hash/leaflet-hash.js"></script>
-    <script src="data/AdlerwegEtappeO2.js"></script>
+	<script src="js/leaflet-elevation/leaflet.elevation-0.0.4.min.js"></script>
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+	
     <style>
         body {
             padding: 0px;
@@ -82,7 +86,19 @@
 
         // leaflet-hash aktivieren
         var hash = new L.Hash(map);
-		L.geoJSON(window.EtappeO2).addTo(map);
+		
+		omnivore.gpx('data/AdlerwegEtappeO2.gpx').addTo(map);
+		
+		console.log(window.EtappeO2);
+		var el =L.control.elevation();
+		/*el.addTo(map);
+		L.geoJSON(window.EtappeO2,{
+			onEachFeature: el.addData.bind(el)
+			}).addTo(map);*/
+			
+		
+		
+
 		
 		var huts = [
 					L.marker([47.038140, 12.353471], {title:"Neue Sajathütte",icon: L.icon({iconUrl:'icons/hut.png'})}),
@@ -94,8 +110,8 @@
 		for (var i=0; i<huts.length; i++){
 			hutsLayer.addLayer(huts[i]);
 		}
-		hutsLayer.addTo(map);
-		map.on("zoomed",function(){
+	
+		map.on("zoomend",function(){
 			if (map.getZoom()>=15){
 					map.addLayer(hutsLayer);
 				}else{
@@ -103,7 +119,7 @@
 					}
 				
 		});
-
+		hutsLayer.addTo(map);
     </script>
 
 </body>
