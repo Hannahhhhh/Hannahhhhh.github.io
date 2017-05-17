@@ -84,6 +84,17 @@
         var hash = new L.Hash(map);
 		L.geoJSON(window.EtappeO2).addTo(map);
 		
+		var huts = [
+					L.marker([47.038140, 12.353471], {title:"Neue Sajathütte",icon: L.icon({iconUrl:'icons/hut.png'})}),
+					L.marker([47.05560, 12.37905], {title:"Eisseehütte",icon: L.icon({iconUrl:'icons/hut.png'})}),
+		];
+		
+		var hutsLayer=L.featureGroup();
+		
+		for (var i=0; i<huts.length; i++){
+			hutsLayer.addLayer(huts[i]);
+		}
+		hutsLayer.addTo(map);
 
     </script>
 
