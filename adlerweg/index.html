@@ -95,6 +95,14 @@
 			hutsLayer.addLayer(huts[i]);
 		}
 		hutsLayer.addTo(map);
+		map.on("zoomed",function(){
+			if (map.getZoom()>=15){
+					map.addLayer(hutsLayer);
+				}else{
+					map.removeLayer(hutsLayer);
+					}
+				
+		});
 
     </script>
 
