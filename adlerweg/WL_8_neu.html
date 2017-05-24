@@ -22,7 +22,7 @@
             padding: 0px;
             margin: 0px;
         }
-        html, body, #map {
+        html, body {
             height: 100vh;
             width: 100vw;
         }
@@ -45,8 +45,36 @@
 	
 	<br>
     <div id="map"></div>
+	<select id="etappen">
+		<option value="AdlerwegEtappe01.gpx">Adlerweg Etappe  01</option>
+		<option value="AdlerwegEtappe02.gpx">Adlerweg Etappe  02</option>
+		<option value="AdlerwegEtappe03.gpx">Adlerweg Etappe  03</option>
+		<option value="AdlerwegEtappe04.gpx">Adlerweg Etappe  04</option>
+		<option value="AdlerwegEtappe05.gpx">Adlerweg Etappe  05</option>
+		<option value="AdlerwegEtappe06.gpx">Adlerweg Etappe  06</option>
+		<option value="AdlerwegEtappe07.gpx">Adlerweg Etappe  07</option>
+		<option value="AdlerwegEtappe08.gpx">Adlerweg Etappe  08</option>
+		<option value="AdlerwegEtappe09.gpx">Adlerweg Etappe  09</option>
+		<option value="AdlerwegEtappe10.gpx">Adlerweg Etappe  10</option>
+		<option value="AdlerwegEtappe11.gpx">Adlerweg Etappe  11</option>
+		<option value="AdlerwegEtappe12.gpx">Adlerweg Etappe  12</option>
+		<option value="AdlerwegEtappe13.gpx">Adlerweg Etappe  13</option>
+		<option value="AdlerwegEtappe14.gpx">Adlerweg Etappe  14</option>
+		<option value="AdlerwegEtappe15.gpx">Adlerweg Etappe  15</option>
+		<option value="AdlerwegEtappe16.gpx">Adlerweg Etappe  16</option>
+		<option value="AdlerwegEtappe17.gpx">Adlerweg Etappe  17</option>
+		<option value="AdlerwegEtappe18.gpx">Adlerweg Etappe  18</option>
+		<option value="AdlerwegEtappe19.gpx">Adlerweg Etappe  19</option>
+		<option value="AdlerwegEtappe20.gpx">Adlerweg Etappe  20</option>
+		<option value="AdlerwegEtappe21.gpx">Adlerweg Etappe  21</option>
+		<option value="AdlerwegEtappe22.gpx">Adlerweg Etappe  22</option>
+		<option value="AdlerwegEtappe23.gpx">Adlerweg Etappe  23</option>
+		<option value="AdlerwegEtappe24.gpx">Adlerweg Etappe  24</option>
+		<option value="AdlerwegEtappe25.gpx">Adlerweg Etappe  25</option>
+	</select>
 
     <script>
+	
         // WMTS-Layer basemap.at - Quelle: http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml
         var layers = {
             geolandbasemap: L.tileLayer("https://{s}.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png", {
@@ -96,99 +124,101 @@
         });
         profileControl.addTo(map);
 
-        // GPX Track laden
-        gpxTrack = omnivore.gpx('data/AdlerwegEtappeO2.gpx').addTo(map);
-
-        // nach erfolgreichem Laden Popup hinzufügen, Ausschnitt setzen und Höhenprofil erzeugen
-        gpxTrack.on('ready', function () {
-            // Popup hinzufügen
-            var markup = '<h3>Adlerweg-Etappe O2: Johannishütte – Eisseehütte</h3>';
-            markup += '<li>Ausgangspunkt: Johannishütte</li>';
-            markup += '<li>Endpunkt: Eisseehütte</li>';
-            markup += '<li>Höhenmeter bergauf: 1020</li>';
-            markup += '<li>Höhenmeter bergab: 620</li>';
-            markup += '<li>Höchster Punkt: 2788</li>';
-            markup += '<li>Schwierigkeitsgrad: mittelschwierig</li>';
-            markup += '<li>Streckenlänge (in km): 10</li>';
-            markup += '<li>Gehzeit (in Stunden): 6</li>';
-            markup += '<li>Einkehrmöglichkeiten: Neue Sajathütte, Eisseehütte</li>';
-            markup += '<li> <a href="http://www.tirol.at/reisefuehrer/sport/wandern/wandertouren/a-adlerweg-etappe-o2-johannishuette-eisseehuette"> Weitere Informationen </a></li>';
-            gpxTrack.bindPopup(markup, { maxWidth : 450 });
-
-            // Ausschnitt setzen
-            map.fitBounds(gpxTrack.getBounds());
-
-            // Höhenprofil erzeugen
-            gpxTrack.eachLayer(function(layer) {
-                profileControl.addData(layer.feature);
-
-			// var pts, in Form von Array
-			//console.log(layer.feature.geometry.coordinates)
-			var pts = layer.feature.geometry.coordinates;
-			
-			for (var i = 1; i < pts.length;i+=1){
-				//console.log(pts[i]);		//aktueller Punkt
-				//console.log(pts[i-1]);		//vorheriger Punkt
-			
-			// Entfernung bestimmen
-			var dist = map.distance(
-				[pts[i][1], pts[i][0]],				//lat, lng einsetzen
-				[pts[i-1][1], pts[i-1][0]]
-			). toFixed(0);
-			console.log(dist);
-			
-			//Höhenunterschied
-			var delta = pts[i][2] - pts[i-1][2];
-			//console.log(delta, "Höhenmeter auf",dist,"m Strecke");
-			
-			var rad = Math.atan(delta/dist)
-			var deg = rad*(180/Math.PI).toFixed(1);
-			console.log ("Grad.",deg);
-			
-			var farbe;
-			
-			/*
-			var rot = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#e34a33','#b30000']; //http://colorbrewer2.org/#type=sequential&scheme=OrRd&n=6
-			var gruen = ['#edf8e9','#c7e9c0','#a1d99b','#74c476','#31a354','#006d2c']; //http://colorbrewer2.org/#type=sequential&scheme=Greens&n=6
-			var blue = ['#eff3ff','#c6dbef','#9ecae1','#6baed6','#3182bd','#08519c']; //http://colorbrewer2.org/#type=sequential&scheme=PuBu&n=6 */
-			
-			switch(true) { // checks if condition is true, not for certain values of a variable
-				case (deg >= 20) :  farbe = "#fef0d9"; break;
-				case (deg >= 15) :  farbe = "#fdd49e"; break;
-				case (deg >= 10) :  farbe = "#fdbb84"; break;
-				case (deg >= 5) :   farbe = "#fc8d59"; break;
-				case (deg >= 1) :   farbe = "#e34a33"; break;
-				case (deg >= -1) :  farbe = "#b30000"; break;
-				case (deg >= -5) :  farbe = "#edf8e9"; break;
-				case (deg >=-10) :  farbe = "#addd8e"; break;
-				case (deg >=-15) :  farbe = "#78c679"; break;
-				case (deg >= -20) : farbe = "#31a354"; break;
-				case (deg < -20) :  farbe = "#006837"; break;			
-				
-		}
-        console.log (deg,farbe);
+		function loadTrack(track){
+			gpxTrack=omnivore.gpx('data/'+track).addTo(map);
+			console.log(track);
 		
-		var pointA = new L.LatLng(pts[i][1], pts[i][0]);
-        var pointB = new L.LatLng(pts[i-1][1], pts[i-1][0]);
-        var pointList = [pointA, pointB];
-   
-        var firstpolyline = new L.Polyline(pointList, {
-         color: farbe,
-         weight: 6,
-         opacity: 0.5,
-         smoothFactor: 1
-
-    });
-    
-      firstpolyline.addTo(map);
 
 
-			
+			// nach erfolgreichem Laden Popup hinzufügen, Ausschnitt setzen und Höhenprofil erzeugen
+			gpxTrack.on('ready', function () {
+				// Popup hinzufügen
+				var markup = '<h3>Adlerweg-Etappe O2: Johannishütte – Eisseehütte</h3>';
+				markup += '<li>Ausgangspunkt: Johannishütte</li>';
+				markup += '<li>Endpunkt: Eisseehütte</li>';
+				markup += '<li>Höhenmeter bergauf: 1020</li>';
+				markup += '<li>Höhenmeter bergab: 620</li>';
+				markup += '<li>Höchster Punkt: 2788</li>';
+				markup += '<li>Schwierigkeitsgrad: mittelschwierig</li>';
+				markup += '<li>Streckenlänge (in km): 10</li>';
+				markup += '<li>Gehzeit (in Stunden): 6</li>';
+				markup += '<li>Einkehrmöglichkeiten: Neue Sajathütte, Eisseehütte</li>';
+				markup += '<li> <a href="http://www.tirol.at/reisefuehrer/sport/wandern/wandertouren/a-adlerweg-etappe-o2-johannishuette-eisseehuette"> Weitere Informationen </a></li>';
+				gpxTrack.bindPopup(markup, { maxWidth : 450 });
+
+				// Ausschnitt setzen
+				map.fitBounds(gpxTrack.getBounds());
+
+				// Höhenprofil erzeugen
+				profileControl.clear();
+				gpxTrack.eachLayer(function(layer) {
+					profileControl.addData(layer.feature);
+
+				// var pts, in Form von Array
+				//console.log(layer.feature.geometry.coordinates)
+				var pts = layer.feature.geometry.coordinates;
+				
+				for (var i = 1; i < pts.length;i+=1){
+					//console.log(pts[i]);		//aktueller Punkt
+					//console.log(pts[i-1]);		//vorheriger Punkt
+				
+				// Entfernung bestimmen
+				var dist = map.distance(
+					[pts[i][1], pts[i][0]],				//lat, lng einsetzen
+					[pts[i-1][1], pts[i-1][0]]
+				). toFixed(0);
+				//console.log(dist);
+				
+				//Höhenunterschied
+				var delta = pts[i][2] - pts[i-1][2];
+				//console.log(delta, "Höhenmeter auf",dist,"m Strecke");
+				
+				var rad = Math.atan(delta/dist)
+				var deg = rad*(180/Math.PI).toFixed(1);
+				// console.log ("Grad.",deg);
+				
+				var farbe;
+				
+				/*
+				var rot = ['#fef0d9','#fdd49e','#fdbb84','#fc8d59','#e34a33','#b30000']; //http://colorbrewer2.org/#type=sequential&scheme=OrRd&n=6
+				var gruen = ['#edf8e9','#c7e9c0','#a1d99b','#74c476','#31a354','#006d2c']; //http://colorbrewer2.org/#type=sequential&scheme=Greens&n=6
+				var blue = ['#eff3ff','#c6dbef','#9ecae1','#6baed6','#3182bd','#08519c']; //http://colorbrewer2.org/#type=sequential&scheme=PuBu&n=6 */
+				
+				switch(true) { // checks if condition is true, not for certain values of a variable
+					case (deg >= 20) :  farbe = "#fef0d9"; break;
+					case (deg >= 15) :  farbe = "#fdd49e"; break;
+					case (deg >= 10) :  farbe = "#fdbb84"; break;
+					case (deg >= 5) :   farbe = "#fc8d59"; break;
+					case (deg >= 1) :   farbe = "#e34a33"; break;
+					case (deg >= -1) :  farbe = "#b30000"; break;
+					case (deg >= -5) :  farbe = "#edf8e9"; break;
+					case (deg >=-10) :  farbe = "#addd8e"; break;
+					case (deg >=-15) :  farbe = "#78c679"; break;
+					case (deg >= -20) : farbe = "#31a354"; break;
+					case (deg < -20) :  farbe = "#006837"; break;			
+					
 			}
+			// console.log (deg,farbe);
 			
-			
-	         });
-        });	
+			var pointA = new L.LatLng(pts[i][1], pts[i][0]);
+			var pointB = new L.LatLng(pts[i-1][1], pts[i-1][0]);
+			var pointList = [pointA, pointB];
+	   
+			var firstpolyline = new L.Polyline(pointList, {
+			 color: farbe,
+			 weight: 6,
+			 opacity: 0.5,
+			 smoothFactor: 1
+
+		});
+		
+		  firstpolyline.addTo(map);
+				
+				}
+							
+			});
+		});	
+	}
 		    // leaflet-hash aktivieren
 				var hash = new L.Hash(map);
 
@@ -201,7 +231,7 @@
             "basemap.at - ORTHOFOTO": layers.bmaporthofoto30cm,
             "OpenStreetMap": layers.osm,
         },{
-            "Adlerweg Etappe O2" : gpxTrack
+            //"Adlerweg Etappe O2" : gpxTrack
         }).addTo(map);
 		
 		
@@ -249,7 +279,15 @@
 				
 		});
 		startendLayer.addTo(map);
-
+		
+		var etappenSelektor = document.getElementById("etappen");
+		
+		etappenSelektor.onchange=function(evt){
+			console.log("Change event:", evt);
+			console.log("GPX Track laden:", etappenSelektor[etappenSelektor.selectedIndex].value);
+			loadTrack(etappenSelektor[etappenSelektor.selectedIndex].value);
+		
+		}
     </script>
 
 	<li> <a href="https://github.com/hannahhhhh/Hannahhhhh.github.io"> Autorin </a> </li>
