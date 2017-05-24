@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -9,12 +10,13 @@
 
     <link rel="stylesheet" href="js/leaflet/leaflet.css" />
 	<link rel="stylesheet" href="js/leaflet-elevation/leaflet.elevation-0.0.4.css" />
+	
     <script src="js/leaflet/leaflet.js"></script>
     <script src="js/leaflet-hash/leaflet-hash.js"></script>
 	<script src="js/leaflet-elevation/leaflet.elevation-0.0.4.min.js"></script>
 	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
-	
+
     <style>
         body {
             padding: 0px;
@@ -24,14 +26,24 @@
             height: 100vh;
             width: 100vw;
         }
+		#map{
+            height: 600px;
+            width: 1024px;
+			}
     </style>
 </head>
 
 <body>
-	<h1> Adlerweg-Etappe 02: Johannishütte - Eisseehütte </h1>
-	<p> Entlang dieser Adlerweg-Etappe begeistern tolle Ausblick auf die benachtbarten Gletscherberge. 
-		Die Route führt von der Johannishütte über den Sajat-Höhenweg und vorbei an der Sajathütte zur Eisseehütte. </P>
-
+	<h1> Adlerweg - Etappe O2: Johannishütte – Eisseehütte </h1
+	
+	<p1> Entlang dieser Adlerweg-Etappe begeistern tolle Ausblick auf die benachtbarten Gletscherberge. Die Route führt von der Johannishütte über den Sajat-Höhenweg und vorbei an der Sajathütte zur Eisseehütte.</p1>
+		
+	<br>
+	<br>
+	
+	<li> <a href="http://www.tirol.at/reisefuehrer/sport/wandern/adlerweg">Webseite Adlerwanderweg </a> </li>
+	
+	<br>
     <div id="map"></div>
 
     <script>
@@ -69,7 +81,6 @@
             center : [47.654, 13.370],
             zoom : 8
         });
-		
 
         // Maßstab hinzufügen
         L.control.scale({
@@ -77,6 +88,44 @@
             metric: true,
             imperial: false
         }).addTo(map);
+
+        // Höhenprofil control hinzufügen
+        var profileControl = L.control.elevation({
+            position : 'bottomleft',
+            theme : 'steelblue-theme'
+        });
+        profileControl.addTo(map);
+
+        // GPX Track laden
+        gpxTrack = omnivore.gpx('data/AdlerwegEtappeO2.gpx').addTo(map);
+
+        // nach erfolgreichem Laden Popup hinzufügen, Ausschnitt setzen und Höhenprofil erzeugen
+        gpxTrack.on('ready', function () {
+            // Popup hinzufügen
+            var markup = '<h3>Adlerweg-Etappe O2: Johannishütte – Eisseehütte</h3>';
+            markup += '<li>Ausgangspunkt: Johannishütte</li>';
+            markup += '<li>Endpunkt: Eisseehütte</li>';
+            markup += '<li>Höhenmeter bergauf: 1020</li>';
+            markup += '<li>Höhenmeter bergab: 620</li>';
+            markup += '<li>Höchster Punkt: 2788</li>';
+            markup += '<li>Schwierigkeitsgrad: mittelschwierig</li>';
+            markup += '<li>Streckenlänge (in km): 10</li>';
+            markup += '<li>Gehzeit (in Stunden): 6</li>';
+            markup += '<li>Einkehrmöglichkeiten: Neue Sajathütte, Eisseehütte</li>';
+            markup += '<li> <a href="http://www.tirol.at/reisefuehrer/sport/wandern/wandertouren/a-adlerweg-etappe-o2-johannishuette-eisseehuette"> Weitere Informationen </a></li>';
+            gpxTrack.bindPopup(markup, { maxWidth : 450 });
+
+            // Ausschnitt setzen
+            map.fitBounds(gpxTrack.getBounds());
+
+            // Höhenprofil erzeugen
+            gpxTrack.eachLayer(function(layer) {
+                profileControl.addData(layer.feature);
+            });
+        });
+		
+		    // leaflet-hash aktivieren
+				var hash = new L.Hash(map);
 
         // WMTS-Layer Auswahl hinzufügen
         var layerControl = L.control.layers({
@@ -86,29 +135,18 @@
             "basemap.at - HIGH-DPI": layers.bmaphidpi,
             "basemap.at - ORTHOFOTO": layers.bmaporthofoto30cm,
             "OpenStreetMap": layers.osm,
+        },{
+            "Adlerweg Etappe O2" : gpxTrack
         }).addTo(map);
-
-        // leaflet-hash aktivieren
-        var hash = new L.Hash(map);
-		
-		omnivore.gpx('data/AdlerwegEtappeO2.gpx').addTo(map);
-		
-		console.log(window.EtappeO2);
-		var el =L.control.elevation();
-		/*el.addTo(map);
-		L.geoJSON(window.EtappeO2,{
-			onEachFeature: el.addData.bind(el)
-			}).addTo(map);*/
-			
 		
 		
-
 		
+		//Hütten hinzufügen
 		var huts = [
 					L.marker([47.038140, 12.353471], {title:"Neue Sajathütte",icon: L.icon({iconUrl:'icons/hut.png'})}),
 					L.marker([47.05560, 12.37905], {title:"Eisseehütte",icon: L.icon({iconUrl:'icons/hut.png'})}),
 		];
-		
+
 		var hutsLayer=L.featureGroup();
 		
 		for (var i=0; i<huts.length; i++){
@@ -116,7 +154,7 @@
 		}
 	
 		map.on("zoomend",function(){
-			if (map.getZoom()>=15){
+			if (map.getZoom()>=12){
 					map.addLayer(hutsLayer);
 				}else{
 					map.removeLayer(hutsLayer);
@@ -124,7 +162,32 @@
 				
 		});
 		hutsLayer.addTo(map);
+		
+		
+		var startend = [
+					L.marker([47.05995,12.33442], {title:"Start",icon: L.icon({iconUrl:'icons/footprint.png'})}),
+					L.marker([47.05564,12.37894], {title:"Ende",icon: L.icon({iconUrl:'icons/star-3.png'})}),
+		];
+		
+		var startendLayer=L.featureGroup();
+		
+		for (var i=0; i<startend.length; i++){
+			startendLayer.addLayer(startend[i]);
+		}
+	
+		map.on("zoomend",function(){
+			if (map.getZoom()>=12){
+					map.addLayer(startendLayer);
+				}else{
+					map.removeLayer(startendLayer);
+					}
+				
+		});
+		startendLayer.addTo(map);
+
     </script>
+
+	<li> <a href="https://github.com/hannahhhhh/Hannahhhhh.github.io"> Autorin </a> </li>
 
 </body>
 
